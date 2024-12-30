@@ -1,4 +1,4 @@
-name: Build and Push Docker Image To AWS ECR
+rname: Build and Push Docker Image To AWS ECR
 on:
   push:
     branches:
@@ -23,6 +23,6 @@ jobs:
 
     - name: Build, tag, and push docker image to Amazon ECR Private
       run: |
-        aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ ECR_PRIVATE_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
-        docker build -t ${{ ECR_PRIVATE_REPOSITORY }} .
-        docker push ${{ ECR_PRIVATE_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ ECR_PRIVATE_REPOSITORY }}:latest
+        aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_PRIVATE_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
+        docker build -t ${{ secrets.ECR_PRIVATE_REPOSITORY }} .
+        docker push ${{ secrets.ECR_PRIVATE_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.ECR_PRIVATE_REPOSITORY }}:latest

@@ -87,8 +87,7 @@ jobs:
             IMAGE_TAG=${{ needs.ci.outputs.short_sha }}
             ECR_ID=${{ secrets.AWS_ECR_PRIVATE_ID }}
 
-            echo $IMAGE_TAG
-            echo $REGION
+            echo "TAG: $IMAGE_TAG"
             
             if ! command -v aws &> /dev/null
             then
@@ -113,12 +112,12 @@ jobs:
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
             docker pull ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_PRIVATE_REPOSITORY }}:${{ needs.ci.outputs.short_sha }}
 
-            if [ -n "$(docker ps -q)" ]; then
-              docker stop $(docker ps -q);
-            fi
-            if [ -n "$(docker ps -aq)" ]; then
-              docker rm -f $(docker ps -aq);
-            fi
+            # if [ -n "$(docker ps -q)" ]; then
+            #   docker stop $(docker ps -q);
+            # fi
+            # if [ -n "$(docker ps -aq)" ]; then
+            #   docker rm -f $(docker ps -aq);
+            # fi
             # docker stop $(docker ps -q) || true
             # docker rm $(docker ps -aq) -f || true
             

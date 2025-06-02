@@ -97,7 +97,7 @@ jobs:
 
             aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws configure set region $REGION
+            aws configure set region ${{ secrets.AWS_REGION }}
             
             # cd ~/.aws
             # cat <<EOF > credentials
@@ -107,8 +107,8 @@ jobs:
             # region=$REGION
             # EOF
             
-            aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_ID.dkr.ecr.$REGION.amazonaws.com
-            docker pull $ECR_ID.dkr.ecr.$REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+            docker pull ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_PRIVATE_REPOSITORY }}:${{ needs.ci.outputs.short_sha }}
 
             # if [ -n "$(docker ps -q)" ]; then
             #   docker stop $(docker ps -q)
@@ -120,4 +120,5 @@ jobs:
             # docker rm $(docker ps -aq) -f || true
             
             docker run -d --name backend-server -p 8080:8080 \
-            $ECR_ID.dkr.ecr.$REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+            ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_PRIVATE_REPOSITORY }}:${{ needs.ci.outputs.short_sha }}
+

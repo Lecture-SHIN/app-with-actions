@@ -106,19 +106,18 @@ jobs:
             # aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             # region=$REGION
             # EOF
-
-            if [ -n "$(docker ps -q)" ]; then
-              docker stop $(docker ps -q)
-            fi
-            
-            if [ -n "$(docker ps -aq)" ]; then
-              docker rm -f $(docker ps -aq)
-            fi
-            # docker stop $(docker ps -q) || true
-            # docker rm $(docker ps -aq) -f || true
             
             aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_ID.dkr.ecr.$REGION.amazonaws.com
             docker pull $ECR_ID.dkr.ecr.$REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
+            # if [ -n "$(docker ps -q)" ]; then
+            #   docker stop $(docker ps -q)
+            # fi
+            # if [ -n "$(docker ps -aq)" ]; then
+            #   docker rm -f $(docker ps -aq)
+            # fi
+            # docker stop $(docker ps -q) || true
+            # docker rm $(docker ps -aq) -f || true
+            
             docker run -d --name backend-server -p 8080:8080 \
             $ECR_ID.dkr.ecr.$REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG

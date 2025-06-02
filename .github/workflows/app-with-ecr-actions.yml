@@ -106,8 +106,10 @@ jobs:
             # aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             # region=$REGION
             # EOF
-            
+
+            echo "---1---"
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+            echo "---2---"
             docker pull ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_PRIVATE_REPOSITORY }}:${{ needs.ci.outputs.short_sha }}
 
             # if [ -n "$(docker ps -q)" ]; then

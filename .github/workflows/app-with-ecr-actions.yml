@@ -1,7 +1,7 @@
 name: Build and Push Docker Image To AWS ECR
 on:
-  # push
-  workflow_dispatch
+  push
+  # workflow_dispatch
 
 jobs:
   ci:
@@ -114,13 +114,13 @@ jobs:
             docker pull ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_PRIVATE_REPOSITORY }}:${{ needs.ci.outputs.short_sha }}
 
             if [ -n "$(docker ps -q)" ]; then
-              docker stop $(docker ps -q)
+              docker stop $(docker ps -q);
             fi
             if [ -n "$(docker ps -aq)" ]; then
-              docker rm -f $(docker ps -aq)
+              docker rm -f $(docker ps -aq);
             fi
-            docker stop $(docker ps -q) || true
-            docker rm $(docker ps -aq) -f || true
+            # docker stop $(docker ps -q) || true
+            # docker rm $(docker ps -aq) -f || true
             
             docker run -d --name backend-server -p 8080:8080 \
             ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_PRIVATE_REPOSITORY }}:${{ needs.ci.outputs.short_sha }}

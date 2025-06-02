@@ -106,9 +106,11 @@ jobs:
             # aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             # region=$REGION
             # EOF
-            
-            docker stop $(docker ps -q) || true
-            docker rm $(docker ps -aq) -f || true
+
+            docker ps -q | xargs -r docker stop
+            docker ps -aq | xargs -r docker rm -f
+            # docker stop $(docker ps -q) || true
+            # docker rm $(docker ps -aq) -f || true
             
             aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_ID.dkr.ecr.$REGION.amazonaws.com
             docker pull $ECR_ID.dkr.ecr.$REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG

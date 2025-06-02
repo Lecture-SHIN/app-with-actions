@@ -57,7 +57,7 @@ jobs:
 
       - name: Create Short SHA
         id: set_sha
-        run : 
+        run : |
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
         # run: echo "IMAGE_TAG=$(date + '%Y%m%d-%H%M%s')" >> $GITHUB_ENV

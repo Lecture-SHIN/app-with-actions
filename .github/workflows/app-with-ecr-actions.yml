@@ -7,7 +7,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     outputs:
-      short_sha: ${{ steps.set_sha.outputs.sha }}
+      short_sha: ${{ steps.set_sha.outputs.SHORT_SHA }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -112,12 +112,12 @@ jobs:
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
             docker pull ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_ECR_PRIVATE_REPOSITORY }}:${{ needs.ci.outputs.short_sha }}
 
-            # if [ -n "$(docker ps -q)" ]; then
-            #   docker stop $(docker ps -q);
-            # fi
-            # if [ -n "$(docker ps -aq)" ]; then
-            #   docker rm -f $(docker ps -aq);
-            # fi
+            if [ -n "$(docker ps -q)" ]; then
+              docker stop $(docker ps -q);
+            fi
+            if [ -n "$(docker ps -aq)" ]; then
+              docker rm -f $(docker ps -aq);
+            fi
             # docker stop $(docker ps -q) || true
             # docker rm $(docker ps -aq) -f || true
             

@@ -85,7 +85,7 @@ jobs:
             REGION=${{ secrets.AWS_REGION }}
             ECR_REPOSITORY=${{ secrets.AWS_ECR_PRIVATE_REPOSITORY }}
             IMAGE_TAG=${{ needs.ci.outputs.short_sha }}
-            ECR_ID=${{ secrets.AWS_ECR_ID }}
+            ECR_ID=${{ secrets.AWS_ECR_PRIVATE_ID }}
 
             if ! command -v aws &> /dev/null
             then

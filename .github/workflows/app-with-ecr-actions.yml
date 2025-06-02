@@ -24,7 +24,7 @@ jobs:
           mkdir -p ./src/main/resources
           cd ./src/main/resources
           touch ./application.properties
-          echo "${{ secrets.PROPERTIES }}" | base64 -d > ./application.properties
+          echo "${{ secrets.PROPERTIES }}" | base64 --decode > ./application.properties
         shell: bash
         
       - name: Build with Maven
@@ -56,12 +56,11 @@ jobs:
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_PRIVATE_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
       - name: Create Short SHA
-        run : echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
-        # run: echo "IMAGE_TAG=$(date + '%Y%m%d-%H%M%s')" >> $GITHUB_ENV
-      
-      - name: Create Short SHA (Output)
         id: set_sha
-        run: echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+        run : 
+          echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+        # run: echo "IMAGE_TAG=$(date + '%Y%m%d-%H%M%s')" >> $GITHUB_ENV
       
       - name: Build Docker image
         run: |
@@ -89,10 +88,13 @@ jobs:
             IMAGE_TAG=${{ needs.ci.outputs.short_sha }}
             ECR_ID=${{ secrets.AWS_ECR_ID }}
 
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            sudo apt install unzip -y
-            unzip awscliv2.zip
-            sudo ./aws/install
+            if ! command -v aws &> /dev/null
+            then
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              sudo apt install unzip -y
+              unzip awscliv2.zip
+              sudo ./aws/install
+            fi
 
             aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
